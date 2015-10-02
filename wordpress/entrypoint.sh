@@ -146,7 +146,7 @@ foreach ( \$pluginsToActivate as \$plugin ) {
 ENDL
 
 # A bunch of hacks to make sure W3 works
-mkdir -r wp-content/cache/tmp wp-content/w3tc-config
+mkdir -p wp-content/cache/tmp wp-content/w3tc-config
 touch wp-content/w3tc-config/master.php
 chmod -R 777 wp-content/w3tc-config wp-content/cache
 rm -rf wp-content/cache/config
