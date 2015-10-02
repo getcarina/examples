@@ -1,6 +1,6 @@
 FROM wordpress:fpm
 
-RUN apt-get -y install curl unzip
+RUN apt-get update && apt-get -y install curl unzip
 
 # Install phpredis extension
 RUN curl -L -o /tmp/redis.tar.gz https://github.com/phpredis/phpredis/archive/2.2.7.tar.gz \
