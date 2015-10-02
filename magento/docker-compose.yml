@@ -1,0 +1,12 @@
+web:
+  image: jamiehannaford/magento
+  ports:
+    - "80:80"
+  links:
+    - redis
+  container_name: web
+  env_file:
+    - env
+redis:
+  image: redis
+  container_name: redis
