@@ -20,7 +20,7 @@ def get_app_data():
 
     # Request data from the app container
     response = requests.get('http://{0}:5000'.format(ip))
-    return response.content
+    return response.text
 
 
 if __name__ == '__main__':
