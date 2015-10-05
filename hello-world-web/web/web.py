@@ -1,5 +1,4 @@
 import os
-import socket
 import requests
 from flask import Flask
 
@@ -15,11 +14,8 @@ def get_app_data():
     # the web container MUST be run with --link <appName>:helloapp
     link_alias = 'helloapp'
 
-    # Lookup the ip address of the app container
-    ip = socket.gethostbyname(link_alias)
-
     # Request data from the app container
-    response = requests.get('http://{0}:5000'.format(ip))
+    response = requests.get('http://{0}:5000'.format(link_alias))
     return response.text
 
 
