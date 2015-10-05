@@ -31,7 +31,6 @@ RUN curl -Ss https://raw.githubusercontent.com/colinmollenhour/modman/master/mod
   && ~/bin/modman clone https://github.com/colinmollenhour/Cm_RedisSession
 
 COPY ./setup-config.bash /opt/
-RUN bash /opt/setup-config.bash
 
 RUN chown -R www-data:www-data .
 RUN usermod -u 1000 www-data

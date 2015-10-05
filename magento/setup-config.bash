@@ -22,51 +22,53 @@ php -f /var/www/html/install.php -- \
   --admin_password $MAGENTO_ADMIN_PASSWORD
 
 data="
-<cache>
-    <backend>Cm_Cache_Backend_Redis</backend>
-    <backend_options>
-        <server>redis</server>
-        <port>6379</port>
-        <persistent></persistent>
-        <database>0</database>
-        <password></password>
-        <force_standalone>0</force_standalone>
-        <connect_retries>1</connect_retries>
-        <read_timeout>10</read_timeout>
-        <automatic_cleaning_factor>0</automatic_cleaning_factor>
-        <compress_data>1</compress_data>
-        <compress_tags>1</compress_tags>
-        <compress_threshold>20480</compress_threshold>
-        <compression_lib>gzip</compression_lib>
-        <use_lua>0</use_lua>
-    </backend_options>
-</cache>
-<session_save><![CDATA[db]]></session_save>
-<redis_session>
-  <host>redis</host>
-  <port>6379</port>
-  <password></password>
-  <timeout>2.5</timeout>
-  <persistent></persistent>
-  <db>0</db>
-  <compression_threshold>2048</compression_threshold>
-  <compression_lib>gzip</compression_lib>
-  <log_level>1</log_level>
-  <max_concurrency>6</max_concurrency>
-  <break_after_frontend>5</break_after_frontend>
-  <break_after_adminhtml>30</break_after_adminhtml>
-  <first_lifetime>600</first_lifetime>
-  <bot_first_lifetime>60</bot_first_lifetime>
-  <bot_lifetime>7200</bot_lifetime>
-  <disable_locking>0</disable_locking>
-  <min_lifetime>60</min_lifetime>
-  <max_lifetime>2592000</max_lifetime>
+<cache>\n
+    <backend>Cm_Cache_Backend_Redis</backend>\n
+    <backend_options>\n
+        <server>redis</server>\n
+        <port>6379</port>\n
+        <persistent></persistent>\n
+        <database>0</database>\n
+        <password></password>\n
+        <force_standalone>0</force_standalone>\n
+        <connect_retries>1</connect_retries>\n
+        <read_timeout>10</read_timeout>\n
+        <automatic_cleaning_factor>0</automatic_cleaning_factor>\n
+        <compress_data>1</compress_data>\n
+        <compress_tags>1</compress_tags>\n
+        <compress_threshold>20480</compress_threshold>\n
+        <compression_lib>gzip</compression_lib>\n
+        <use_lua>0</use_lua>\n
+    </backend_options>\n
+</cache>\n
+<session_save><![CDATA[db]]></session_save>\n
+<redis_session>\n
+    <host>redis</host>\n
+    <port>6379</port>\n
+    <password></password>\n
+    <timeout>2.5</timeout>\n
+    <persistent></persistent>\n
+    <db>0</db>\n
+    <compression_threshold>2048</compression_threshold>\n
+    <compression_lib>gzip</compression_lib>\n
+    <log_level>1</log_level>\n
+    <max_concurrency>6</max_concurrency>\n
+    <break_after_frontend>5</break_after_frontend>\n
+    <break_after_adminhtml>30</break_after_adminhtml>\n
+    <first_lifetime>600</first_lifetime>\n
+    <bot_first_lifetime>60</bot_first_lifetime>\n
+    <bot_lifetime>7200</bot_lifetime>\n
+    <disable_locking>0</disable_locking>\n
+    <min_lifetime>60</min_lifetime>\n
+    <max_lifetime>2592000</max_lifetime>\n
 </redis_session>
-</global>
 "
 
-touch /var/www/html/app/etc/local.xml
-chmod 644 /var/www/html/app/etc/local.xml
-chown www-data:www-data /var/www/html/app/etc/local.xml
+file="/var/www/html/app/etc/local.xml"
 
-sed -i -e "s@<\/global>@${data}@" /var/www/html/app/etc/local.xml
+touch $file
+chmod 644 $file
+chown www-data:www-data $file
+
+content="$(echo $data | sed 's/\//\\\//g')"
+sed -i -e "/<\/global>/ s/.*/${content}\n&/" $file
