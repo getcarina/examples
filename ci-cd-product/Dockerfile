@@ -7,7 +7,6 @@ RUN apt-get update && apt-get install -y npm
 RUN npm install restify
 RUN npm install request
 
-COPY package.json package.json
 COPY productws.js productws.js
 
 EXPOSE 8080
