@@ -8,7 +8,7 @@ app.debug = True
 
 @app.route("/version", methods=['GET'])
 def hello():
-    return "1.0.1"
+    return "2.0.1"
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
