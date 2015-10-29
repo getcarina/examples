@@ -17,9 +17,10 @@ def webhook():
             client_cert=('/etc/docker/server-cert.pem', '/etc/docker/server-key.pem'),
             verify='/etc/docker/ca.pem')
         cli = docker.Client(base_url='https://swarm-manager:2376', tls=tls_config)
-
+        container_env="DB_IP=" + os.environ["DB_IP"]
+        container_env=",DB_POST=" + os.environ["DB_PORT"]
         host_config = cli.create_host_config(port_bindings={8080: 8080})
-        container = cli.create_container(image=os.environ["WHWATCH_IMAGE_NAME"], detach=True, host_config=host_config)
+        container = cli.create_container(image=os.environ["WHWATCH_IMAGE_NAME"], detach=True, host_config=host_config, environment=container_env)
         response = cli.start(container=container.get('Id'))
 
     except Exception:
