@@ -8,7 +8,7 @@ app.debug = True
 
 @app.route("/version", methods=['GET'])
 def hello():
-    return "2.0.1"
+    return "2.0.2"
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
@@ -20,7 +20,7 @@ def webhook():
         container_env="DB_IP=" + os.environ["DB_IP"]
         container_env=",DB_POST=" + os.environ["DB_PORT"]
         host_config = cli.create_host_config(port_bindings={8080: 8080})
-        container = cli.create_container(image=os.environ["WHWATCH_IMAGE_NAME"], detach=True, host_config=host_config, environment=container_env)
+        container = cli.create_container(image=os.environ["WHWATCH_IMAGE_NAME"], detach=True, host_config=host_config, environment="DB_IP=104.130.0.7,DB_PORT=32769")
         response = cli.start(container=container.get('Id'))
 
     except Exception:
