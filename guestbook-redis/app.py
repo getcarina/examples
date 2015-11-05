@@ -17,7 +17,7 @@ host = os.getenv('REDIS_HOST')
 port = int(os.getenv('REDIS_PORT'))
 
 app = Flask(__name__)
-redis = Redis(host=host, port=port)
+redis = Redis(host=host, port=port, charset='utf-8', decode_responses=True)
 
 
 @app.route('/', methods=['GET', 'POST'])
