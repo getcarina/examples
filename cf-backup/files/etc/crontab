@@ -1,0 +1,1 @@
+* * * * * root /usr/bin/cron-job.sh /usr/bin/run-rack.sh >> /var/log/cron.log 2>&1

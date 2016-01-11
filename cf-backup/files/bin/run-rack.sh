@@ -1,0 +1,1 @@
+rack files object upload-dir --container $CONTAINER --dir $VOLUME
