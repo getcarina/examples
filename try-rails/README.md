@@ -4,27 +4,29 @@ This is a sample Rails application which runs on Carina and is backed by a
 MySQL database hosted on the Rackspace Cloud Database service.
 
 1. Create a MySQL database in the IAD region in the Rackspace Cloud Control Panel.
-    Note it's host name as it will be needed later.
+    Note the host name, and credentials as it will be needed in the next step.
 
-2. Run the `rackerlabs/try-rails` container.
+2. Run the `rackerlabs/try-rails` container. Update the `DATABASE_URL` environment
+    variable with your database connection details.
 
     ```bash
     docker run --name rails \
-    -e DATABASE_URL="mysql://username:password@abc123.rackspaceclouddb.com/dbname" \
+    --env DATABASE_URL="mysql://username:password@host/dbname" \
     --detach \
     --publish-all \
     rackerlabs/try-rails
     ```
 
 3. Identity the port where the rails application was published. In the example below,
-    the port is 56740.
+    the port is 32800.
 
     ```bash
     $ docker port rails
-    164.2.58.187:56740
+    3000/tcp -> 172.99.65.237:32800
     ```
 
 4. Open http://<em>&lt;dockerHost&gt;</em>:<em>&lt;containerPort&gt;</em>/demo/helloworld,
-    for example **http://164.2.58.187:56740/demo/helloworld**. You should see the following output:
+    for example **http://172.99.65.237:32800/demo/helloworld**. You should see the
+    Powered By Carina badge if the database connection was successful.
 
     ![Powered by Carina](carina.png)
