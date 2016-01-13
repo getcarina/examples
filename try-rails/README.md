@@ -9,7 +9,11 @@ MySQL database hosted on the Rackspace Cloud Database service.
 2. Run the `rackerlabs/try-rails` container.
 
     ```bash
-    docker run --detach --name rails --publish-all rackerlabs/try-rails
+    docker run --name rails \
+    -e DATABASE_URL="mysql://username:password@abc123.rackspaceclouddb.com/dbname" \
+    --detach \
+    --publish-all \
+    rackerlabs/try-rails
     ```
 
 3. Identity the port where the rails application was published. In the example below,
