@@ -25,8 +25,8 @@ MySQL database hosted on the Rackspace Cloud Database service.
     3000/tcp -> 172.99.65.237:32800
     ```
 
-4. Open http://<em>&lt;dockerHost&gt;</em>:<em>&lt;containerPort&gt;</em>/demo/helloworld,
-    for example **http://172.99.65.237:32800/demo/helloworld**. You should see the
+4. Open http://<em>&lt;dockerHost&gt;</em>:<em>&lt;containerPort&gt;</em>,
+    for example **http://172.99.65.237:32800**. You should see the
     Powered By Carina badge if the database connection was successful.
 
     ![Powered by Carina](carina.png)
