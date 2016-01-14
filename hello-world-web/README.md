@@ -1,19 +1,19 @@
 # Hello World Web
 
 This is a sample Python web application, running on port 5000,
-which prints data retrieved from the linked `rackerlabs/hello-world-app` container.
+which prints data retrieved from the linked `carinamarina/hello-world-app` container.
 
-1. Run the `rackerlabs/hello-world-app` container.
+1. Run the `carinamarina/hello-world-app` container.
 
     ```bash
-    docker run --detach --name app rackerlabs/hello-world-app
+    docker run --detach --name app carinamarina/hello-world-app
     ```
 
-2. Run the `rackerlabs/hello-world-web` container, linking to the app container using
+2. Run the `carinamarina/hello-world-web` container, linking to the app container using
     the alias **helloapp**.
 
     ```bash
-    docker run --detach --name web --link app:helloapp --publish-all rackerlabs/hello-world-web
+    docker run --detach --name web --link app:helloapp --publish-all carinamarina/hello-world-web
     ```
 
 3. Identity the port where the web container was published. In the example below,
