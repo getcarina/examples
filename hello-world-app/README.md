@@ -3,10 +3,10 @@
 This is a sample Python web application, running on port 5000,
 which prints `Hello  World!`.
 
-1. Run the `rackerlabs/hello-world-app` container.
+1. Run the `carinamarina/hello-world-app` container.
 
     ```bash
-    docker run --detach --name app --publish-all rackerlabs/hello-world-app
+    docker run --detach --name app --publish-all carinamarina/hello-world-app
     ```
 
 2. Identity the port where the app container was published. In the example below,

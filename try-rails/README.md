@@ -6,7 +6,7 @@ MySQL database hosted on the Rackspace Cloud Database service.
 1. Create a MySQL database in the IAD region in the Rackspace Cloud Control Panel.
     Note the host name, and credentials as it will be needed in the next step.
 
-2. Run the `rackerlabs/try-rails` container. Update the `DATABASE_URL` environment
+2. Run the `carinamarina/try-rails` container. Update the `DATABASE_URL` environment
     variable with your database connection details.
 
     ```bash
@@ -14,7 +14,7 @@ MySQL database hosted on the Rackspace Cloud Database service.
     --env DATABASE_URL="mysql://username:password@host/dbname" \
     --detach \
     --publish-all \
-    rackerlabs/try-rails
+    carinamarina/try-rails
     ```
 
 3. Identity the port where the rails application was published. In the example below,

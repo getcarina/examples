@@ -2,4 +2,4 @@ set +v
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-docker build --tag rackerlabs/hello-world-web $DIR
+docker build --tag carinamarina/hello-world-web $DIR
