@@ -1,0 +1,7 @@
+<% dbname = ActiveRecord::Base.connection.execute("SELECT DATABASE();").first.first %>
+
+<h1 style="text-align: center">
+  You are connected to the <%= dbname %>  database!
+</h1>
+
+<img src="/carina.png" style="width: 260px; height: 260px; margin-left: auto; margin-right: auto; display: block"/>
