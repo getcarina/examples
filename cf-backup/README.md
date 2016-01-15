@@ -1,6 +1,6 @@
-# Cloudfiles backup image
+# Rackspace Cloud Files backup Docker image
 
-This image will upload (backup) a directory to cloudfiles every minute using cron and rack.
+This image will upload (backup) a directory to Cloud Files every minute using cron and [rack](https://developer.rackspace.com/docs/rack-cli/ "rack"). If you want to provide a different schedule, set the SCHEDULE environment variable to the cron string you want (defaults to * * * * *).
 
 Building the image:
 
@@ -8,10 +8,32 @@ Building the image:
 docker build -t carinamarina/cf-backup cf-backup
 ```
 
-Example run:
+Example run. Bash:
 
 ```
-docker run -e RS_USERNAME='[redacted]' -e RS_API_KEY='[redacted]' -e RS_REGION_NAME='DFW' -e VOLUME='/config' -e CONTAINER='quassel-backup' --volumes-from quassel-data --name backup carinamarina/cf-backup
+docker run \
+--name backup \ 
+--env RS_USERNAME='[redacted]' \ 
+--env RS_API_KEY='[redacted]' \
+--env RS_REGION_NAME='DFW' \
+--env DIRECTORY='/config' \
+--env CONTAINER='quassel-backup' \ 
+--volumes-from quassel-data \
+carinamarina/cf-backup
+```
+
+PowerShell:
+
+```
+docker run `
+--name backup ` 
+--env RS_USERNAME='[redacted]' ` 
+--env RS_API_KEY='[redacted]' `
+--env RS_REGION_NAME='DFW' `
+--env DIRECTORY='/config' `
+--env CONTAINER='quassel-backup' ` 
+--volumes-from quassel-data `
+carinamarina/cf-backup`
 ```
 
 `RS_USERNAME` - Rackspace username
@@ -20,8 +42,12 @@ docker run -e RS_USERNAME='[redacted]' -e RS_API_KEY='[redacted]' -e RS_REGION_N
 
 `RS_REGION_NAME` - Rackspace region
 
-`VOLUME` - Directory to backup from the container
+`DIRECTORY` - Directory to backup from the container
 
 `CONTAINER` - The container name to upload to
 
 `--volumes-from` - the data volume container to mount
+
+`SCHEDULE` - (optional) cron schedule string
+
+`NOCOMPRESSION` - set this to upload full files instead of a compressed archive
