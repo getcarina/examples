@@ -1,1 +1,1 @@
-env - `cat /etc/env.sh` /bin/bash -c $1 >> /var/log/cron.log 2>&1
+env - `cat /etc/env.sh` /bin/sh -c $1 >> /var/log/cron.log 2>&1

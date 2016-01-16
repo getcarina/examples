@@ -33,7 +33,7 @@ docker run `
 --env DIRECTORY='/config' `
 --env CONTAINER='quassel-backup' ` 
 --volumes-from quassel-data `
-carinamarina/cf-backup`
+carinamarina/cf-backup
 ```
 
 `RS_USERNAME` - Rackspace username
