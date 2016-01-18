@@ -1,3 +1,4 @@
+#!/bin/sh -x
 if [ "$NOCOMPRESSION" = "true" ];
 then   
    rack files object upload-dir --container $CONTAINER --dir $DIRECTORY

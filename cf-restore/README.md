@@ -12,7 +12,8 @@ Example run with bash:
 
 ```
 docker run \
---name backup \  
+--name backup \
+--env  
 --env RS_USERNAME='[redacted]' \ 
 --env RS_API_KEY='[redacted]' \
 --env RS_REGION_NAME='DFW' \
@@ -25,7 +26,8 @@ PowerShell:
 
 ```
 docker run `
---name backup `  
+--name backup `
+--rm `
 --env RS_USERNAME='[redacted]' ` 
 --env RS_API_KEY='[redacted]' `
 --env RS_REGION_NAME='DFW' `
@@ -47,4 +49,4 @@ carinamarina/cf-backup
 
 `--volumes-from` - the data volume container to mount
 
-`NOCOMPRESSION` - set this to download full files instead of a compressed archive. Use the same setting as your backup setting, if using the cf-backup image
+`NOCOMPRESSION` - set this to download full files instead of a compressed archive. Use the same setting as your backup setting, if using the cf-backup image. Does not work with hidden files.

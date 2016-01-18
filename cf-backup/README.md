@@ -17,7 +17,8 @@ docker run \
 --env RS_API_KEY='[redacted]' \
 --env RS_REGION_NAME='DFW' \
 --env DIRECTORY='/config' \
---env CONTAINER='quassel-backup' \ 
+--env CONTAINER='quassel-backup' \
+--env SCHEDULE='*/2 * * * *' \ 
 --volumes-from quassel-data \
 carinamarina/cf-backup
 ```
@@ -31,7 +32,8 @@ docker run `
 --env RS_API_KEY='[redacted]' `
 --env RS_REGION_NAME='DFW' `
 --env DIRECTORY='/config' `
---env CONTAINER='quassel-backup' ` 
+--env CONTAINER='quassel-backup' `
+--env SCHEDULE='*/2 * * * *' ` 
 --volumes-from quassel-data `
 carinamarina/cf-backup
 ```
@@ -46,8 +48,8 @@ carinamarina/cf-backup
 
 `CONTAINER` - The container name to upload to
 
-`--volumes-from` - the data volume container to mount
-
 `SCHEDULE` - (optional) cron schedule string
 
-`NOCOMPRESSION` - set this to upload full files instead of a compressed archive
+`NOCOMPRESSION` - set this to 'true' to upload individual files instead of a single compressed archive. Defaults to using a single compressed archive by default. Not using an archive will also ignore hidden files in $DIRECTORY.
+
+`--volumes-from` - the data volume container to mount

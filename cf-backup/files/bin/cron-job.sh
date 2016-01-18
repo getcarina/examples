@@ -1,1 +1,2 @@
-env - `cat /etc/env.sh` /bin/sh -c $1 >> /var/log/cron.log 2>&1
+#!/bin/sh -x
+env $(cat /etc/env.sh | xargs -0) run-rack.sh >> /var/log/cron.log 2>&1
