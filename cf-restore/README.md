@@ -12,29 +12,29 @@ Example run with bash:
 
 ```
 docker run \
---name backup \
---env  
---env RS_USERNAME='[redacted]' \ 
+--name restore \
+--rm \
+--env RS_USERNAME='[redacted]' \
 --env RS_API_KEY='[redacted]' \
 --env RS_REGION_NAME='DFW' \
 --env DIRECTORY='/config' \
---env CONTAINER='quassel-backup' \ 
+--env CONTAINER='quassel-backup' \
 --volumes-from quassel-data \
-carinamarina/cf-backup
+carinamarina/cf-restore
 ```
 PowerShell:
 
 ```
 docker run `
---name backup `
+--name restore `
 --rm `
---env RS_USERNAME='[redacted]' ` 
+--env RS_USERNAME='[redacted]' `
 --env RS_API_KEY='[redacted]' `
 --env RS_REGION_NAME='DFW' `
 --env DIRECTORY='/config' `
---env CONTAINER='quassel-backup' ` 
+--env CONTAINER='quassel-backup' `
 --volumes-from quassel-data `
-carinamarina/cf-backup
+carinamarina/cf-restore
 ```
 
 `RS_USERNAME` - Rackspace username
