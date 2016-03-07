@@ -1,0 +1,58 @@
+version: "2"
+
+# A Docker Compose file for configuration of the development environment
+
+services:
+  # load balancer
+  lb:
+    extends:
+      file: docker-compose-common.yml
+      service: lb
+
+  # app
+  app:
+    extends:
+      file: docker-compose-common.yml
+      service: app
+    ports:
+      # Publish the port so it's visible on the host, you can access the app directly
+      - "8000:8000"
+    volumes:
+      # Mount the app dir in the container as /src so our changes to the app code
+      # are also changed in the container
+      - ./app:/src
+    environment:
+      # Environment variables to configure the app on startup.
+      # We don't care about commiting these creds to GitHub because they're only
+      # for our local development environment
+      - MYSQL_USER=guestbook-admin
+      - MYSQL_PASSWORD=my-guestbook-admin-password
+    command: gunicorn --reload app:app --bind 0.0.0.0:8000
+      # Run Gunicorn to serve app requests and reload on change so we can see our
+      # changes to the app code
+
+  db:
+    extends:
+      file: docker-compose-common.yml
+      service: db
+    ports:
+      # Publish the port so it's visible on the host, you can access the db directly
+      - "3306:3306"
+    environment:
+      # Environment variables to configure MySQL on startup.
+      # We don't care about commiting these creds to GitHub because they're only
+      # for our local development environment
+      - MYSQL_ROOT_PASSWORD=my-root-password
+      - MYSQL_USER=guestbook-admin
+      - MYSQL_PASSWORD=my-guestbook-admin-password
+    volumes_from:
+      # Mount the volumes from the data container to store our MySQL files
+      - data
+
+  data:
+    extends:
+      file: docker-compose-common.yml
+      service: data
+
+networks:
+  backend: {}

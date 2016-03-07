@@ -1,0 +1,50 @@
+version: "2"
+
+# A Docker Compose file for common configuration between development and production environments
+
+services:
+  lb:
+    # The load balancer container. Built from the lb/Dockerfile.
+    container_name: pythonwebapp_lb
+    build: lb
+    restart: unless-stopped
+    networks:
+      - backend
+    ports:
+      - "80:80"
+
+  app:
+    # The app container. Built from the app/Dockerfile.
+    build: app
+    restart: unless-stopped
+    networks:
+      backend:
+        aliases:
+          # All app servers be referred to by this alias with the backend network
+          - apps
+    environment:
+      # Environment variables to configure the app on startup.
+      - MYSQL_DATABASE=guestbook
+      - MYSQL_HOST=pythonwebapp_db
+
+  db:
+    # The database container. Built from the db/Dockerfile.
+    container_name: pythonwebapp_db
+    build: db
+    restart: unless-stopped
+    networks:
+      - backend
+    environment:
+      # Environment variables to configure MySQL on startup.
+      - MYSQL_DATABASE=guestbook
+
+  data:
+    container_name: pythonwebapp_db_data
+    # The Data Volume Container used to mount a volume to store our persistent data
+    # https://getcarina.com/docs/tutorials/data-volume-containers/
+    image: cirros
+    volumes:
+      # Mount this path as a volume to store our MySQL files
+      - /var/lib/mysql
+    command: /bin/true
+      # Run a trivial command to exit quickly. Volumes don't need a running container.

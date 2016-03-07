@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Carina Guestbook</title>
+</head>
+<body>
+    <h1>Carina Guestbook</h1>
+    <h2>Sign the Guestbook!</h2>
+    <form method="POST" action="">
+        <label for="name">Name:</label>
+        <input id="name" name="name" type="text" autofocus/>
+        <br/><br/>
+        <input type="submit"/>
+    </form>
+    <h2>Previous Guests:</h2>
+    <ol>
+        {% for guest in guests %}
+        <li>{{ guest.name }}</li>
+        {% endfor %}
+    </ol>
+</body>
+</html>

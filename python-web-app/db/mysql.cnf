@@ -1,0 +1,4 @@
+[mysqld]
+# Skip reverse DNS lookup of clients
+skip-name-resolve
+bind-address=0.0.0.0
