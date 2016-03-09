@@ -1,0 +1,94 @@
+#!/bin/bash
+
+set -ueo pipefail
+
+# Removes non-alphanumeric characters and downcases a string
+slugify () {
+  string=${1:-}
+  echo $string | sed -r s/[^a-zA-Z0-9]+/-/g | sed -r s/^-+\|-+$//g | tr A-Z a-z
+
+  return 0
+}
+
+# Get options
+args=$(getopt -o "o::z::c:s:" --long "container:,source:,stdout::,zip::" -n $(basename "${0}") -- "$@")
+if [ $? != 0 ] ; then echo "Unable to parse options." >&2 ; exit 1 ; fi
+eval set -- "$args"
+
+# Set default values for each of the options
+CONTAINER=""
+COMPRESS=false
+SOURCE=""
+USE_STDOUT=false
+
+# Assign options to variables, override defaults
+while true; do
+  param=${1:-}
+  value=${2:-}
+
+  case "$param" in
+    -c | --container ) CONTAINER="$value"; shift; shift ;;
+    -o | --stdout ) USE_STDOUT=true; shift; shift ;;
+    -s | --source ) SOURCE="$value"; shift; shift ;;
+    -z | --zip ) COMPRESS=true; shift; shift ;;
+    -- ) shift; break ;;
+    * ) break ;;
+  esac
+done
+
+# After assigning variables, make sure we're in a good state to proceed.
+if [[ -z ${SOURCE} ]]; then
+  echo "Error: No backup source specified."
+  exit 1
+fi
+
+if [ -z ${CONTAINER} ] && ! ${USE_STDOUT}; then
+  echo "Error: No Cloud Files container specified. Did you mean to use -o?"
+  exit 1
+fi
+
+# Assign year/month/day/time to variables
+date_year=$(date +%Y)
+date_month=$(date +%m)
+date_day=$(date +%d)
+date_time=$(date +%H-%M)
+
+# Remove all the non-alphanumeric characters from the source directory and use
+# the result as the archive's file name
+file_slug=$(slugify ${date_time}-${SOURCE})
+file_name=${file_slug}.tar
+
+# Use "-" to have `tar` pipe the archive contents to stdout
+if ${USE_STDOUT}; then
+  tar_file="-"
+else
+
+  # If compressing the archive, add the customary `.gz` file extension.
+  if ${COMPRESS}; then
+    file_name=${file_name}.gz
+  fi
+
+  # Store the archive in /tmp
+  tar_file=/tmp/${file_name}
+fi
+
+# Run the appropriate invocation of `tar`
+if ${COMPRESS}; then
+  tar -czf ${tar_file} ${SOURCE}
+else
+  tar -cf ${tar_file} ${SOURCE}
+fi
+
+# If piping to stdout, we're done!
+if ${USE_STDOUT}; then
+  exit 0
+fi
+
+# Format the Cloud Files object name.
+object_name=${date_year}/${date_month}/${date_day}/${file_name}
+
+# Upload the archive to Cloud Files
+rack files object upload --container ${CONTAINER} --file ${tar_file} --name ${object_name}
+
+# Remove the archive.
+rm ${tar_file}
