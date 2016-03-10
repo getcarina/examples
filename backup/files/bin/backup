@@ -10,16 +10,31 @@ slugify () {
   return 0
 }
 
-# Get options
-args=$(getopt -o "o::z::c:s:" --long "container:,source:,stdout::,zip::" -n $(basename "${0}") -- "$@")
-if [ $? != 0 ] ; then echo "Unable to parse options." >&2 ; exit 1 ; fi
-eval set -- "$args"
+usage () {
+  echo "Usage: backup [options]"
+  echo ""
+  echo "Backup an directory as a tarball to stdout or Cloud Files"
+  echo ""
+  echo "  Options:"
+  echo "  -c, --container <name>    Name of a Cloud Files container"
+  echo "  -h, --help                Show help information"
+  echo "  -s, --source <path>       Path to source directory"
+  echo "  --stdout                  Use stdout instead of Cloud Files"
+  echo "  -z, --zip                 Use gzip to compress archive"
+  echo "  "
+}
 
 # Set default values for each of the options
 CONTAINER=""
 COMPRESS=false
+HELP=false
 SOURCE=""
 USE_STDOUT=false
+
+# Get options
+args=$(getopt -o "c:h::s:z::" --long "container:,help::,source:,stdout::,zip::" -n $(basename "${0}") -- "$@")
+if [ $? != 0 ] ; then echo "Unable to parse options." >&2 ; exit 1 ; fi
+eval set -- "$args"
 
 # Assign options to variables, override defaults
 while true; do
@@ -28,13 +43,20 @@ while true; do
 
   case "$param" in
     -c | --container ) CONTAINER="$value"; shift; shift ;;
-    -o | --stdout ) USE_STDOUT=true; shift; shift ;;
+    -h | --help ) HELP=true; shift; shift ;;
     -s | --source ) SOURCE="$value"; shift; shift ;;
+    --stdout ) USE_STDOUT=true; shift; shift ;;
     -z | --zip ) COMPRESS=true; shift; shift ;;
     -- ) shift; break ;;
     * ) break ;;
   esac
 done
+
+# Exit early and show usage if requested
+if ${HELP}; then
+  usage
+  exit 0
+fi
 
 # After assigning variables, make sure we're in a good state to proceed.
 if [[ -z ${SOURCE} ]]; then
@@ -73,10 +95,11 @@ else
 fi
 
 # Run the appropriate invocation of `tar`
+echo "Adding source data to archive..."
 if ${COMPRESS}; then
-  tar -czf ${tar_file} ${SOURCE}
+  tar -czf ${tar_file} -C ${SOURCE} .
 else
-  tar -cf ${tar_file} ${SOURCE}
+  tar -cf ${tar_file} -C ${SOURCE} .
 fi
 
 # If piping to stdout, we're done!
@@ -88,7 +111,8 @@ fi
 object_name=${date_year}/${date_month}/${date_day}/${file_name}
 
 # Upload the archive to Cloud Files
-rack files object upload --container ${CONTAINER} --file ${tar_file} --name ${object_name}
+echo "Uploading archive..."
+rack files large-object upload --size-pieces 64 --container ${CONTAINER} --file ${tar_file} --name ${object_name}
 
 # Remove the archive.
 rm ${tar_file}

@@ -5,21 +5,27 @@ This image will create an archive file of a single directory in a data volume, a
 ### Build the image
 
 ```
-docker build -t carinamarina/backup backup
+docker build -t carinamarina/backup .
 ```
 
 ### Usage
 
 ```bash
-docker run [OPTIONS] carinamarina/backup <ARG...>
+docker run [OPTIONS] carinamarina/backup <COMMAND> <ARG...>
 ```
 
-The container’s entrypoint accepts several arguments:
+`COMMAND` can be one of `backup` or `restore`.
+
+`backup` accepts several arguments:
 
 * `-s, --source` The source directory for the backup. All files in this directory will be added to the archive.
 * `-c, --container` The name of the Cloud Files container in which to store the backup. Ignored if `--stdout` is used.
-* `-o, --stdout` Output the archive to stdout instead of uploading it to a Cloud Files container.
+* `--stdout` Output the archive to stdout instead of uploading it to a Cloud Files container.
 * `-z, --zip` Compress the archive using gzip.
+
+`restore` accepts the following arguments:
+
+* TBD
 
 
 ### Examples
@@ -36,6 +42,7 @@ $ docker run \
   --env RS_REGION_NAME=${RS_REGION_NAME} \
   --volumes-from mysql-data \
   carinamarina/backup \
+  backup \
   --source /data/ \
   --container mysql-backups \
   --zip
@@ -57,6 +64,7 @@ $ docker run \
   --rm \
   --volumes-from mysql-data \
   carinamarina/backup \
+  backup \
   --source /data/ \
   --stdout \
   --zip \

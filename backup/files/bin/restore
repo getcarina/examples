@@ -1,0 +1,83 @@
+#!/bin/bash
+
+set -ueo pipefail
+
+# Either reads from stdin or rack. Needs to be piped somewhere.
+get_archive () {
+  if ${STDIN}; then
+    cat /dev/stdin
+  else
+    rack files object download --container ${CONTAINER} --name ${OBJECT}
+  fi
+}
+
+usage () {
+  echo "Usage: restore [options]"
+  echo ""
+  echo "Restore an archive from stdin or Cloud Files"
+  echo ""
+  echo "  Options:"
+  echo "  -c, --container <name>    Name of a Cloud Files container"
+  echo "  -d, --destination <path>  Destination for archive contents"
+  echo "  -h, --help                Show help information"
+  echo "  -o, --object <name>       Name of archive object in a container"
+  echo "  --stdin                   Use stdin instead of Cloud Files"
+  echo "  -z, --zip                 Use gzip to uncompress archive"
+  echo "  "
+}
+
+CONTAINER=""
+DESTINATION=""
+HELP=false
+OBJECT=""
+STDIN=false
+ZIP=false
+
+# Get options
+args=$(getopt -o "c:d:h::o:z::" --long "container:,destination:,help::,object:,stdin::,zip::" -n $(basename "${0}") -- "$@")
+if [ $? != 0 ] ; then echo "Unable to parse options." >&2 ; exit 1 ; fi
+eval set -- "$args"
+
+# Assign options to variables, override defaults
+while true; do
+  param=${1:-}
+  value=${2:-}
+
+  case "$param" in
+    -c | --container ) CONTAINER="$value"; shift; shift ;;
+    -d | --destination ) DESTINATION="$value"; shift; shift ;;
+    -h | --help ) HELP=true; shift; shift ;;
+    -o | --object ) OBJECT="$value"; shift; shift ;;
+    --stdin ) STDIN=true; shift; shift ;;
+    -z | --zip ) ZIP=true; shift; shift ;;
+    -- ) shift; break ;;
+    * ) break ;;
+  esac
+done
+
+# Exit early and show usage if requested
+if ${HELP}; then
+  usage
+  exit 0
+fi
+
+# After assigning variables, make sure we're in a good state to proceed.
+if [[ -z ${DESTINATION} ]]; then
+  echo "Error: No restore destination specified."
+  exit 1
+fi
+
+if [ -z ${CONTAINER} ] || [ -z ${OBJECT} ]; then
+  if ! ${STDIN}; then
+    echo "Error: No Cloud Files container/object specified. Did you mean to use --stdin?"
+    exit 1
+  fi
+fi
+
+if ${ZIP}; then
+  echo "Reading and unzipping archive..."
+  get_archive | tar -xzf - -C ${DESTINATION}
+else
+  echo "Reading and extracting archive..."
+  get_archive | tar -xf - -C ${DESTINATION}
+fi
