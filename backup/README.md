@@ -18,15 +18,20 @@ docker run [OPTIONS] carinamarina/backup <COMMAND> <ARG...>
 
 `backup` accepts several arguments:
 
-* `-s, --source` The source directory for the backup. All files in this directory will be added to the archive.
 * `-c, --container` The name of the Cloud Files container in which to store the backup. Ignored if `--stdout` is used.
+* `-h, --help` Show help information
+* `-s, --source` The source directory for the backup. All files in this directory will be added to the archive.
 * `--stdout` Output the archive to stdout instead of uploading it to a Cloud Files container.
 * `-z, --zip` Compress the archive using gzip.
 
 `restore` accepts the following arguments:
 
-* TBD
-
+* `-c, --container <name>` Name of a Cloud Files container
+* `-d, --destination <path>` Restore destination for archive contents
+* `-h, --help` Show help information
+* `-o, --object <name>` Name of archive object in a container
+* `--stdin`  Read from stdin instead of Cloud Files
+* `-z, --zip` Use gzip to uncompress archive
 
 ### Examples
 
@@ -38,7 +43,7 @@ Assume you've created a container named `mysql-data` with a data volume at `/dat
 $ docker run \
   --rm \
   --env RS_USERNAME=${RS_USERNAME} \
-  --env RS_APIKEY=${RS_API_KEY} \
+  --env RS_API_KEY=${RS_API_KEY} \
   --env RS_REGION_NAME=${RS_REGION_NAME} \
   --volumes-from mysql-data \
   carinamarina/backup \
@@ -72,3 +77,43 @@ $ docker run \
 ```
 
 This will create a file named `mysql-backup.tar.gz` in the directory from which you ran the command. Note the use of `> mysql-backup.tar.gz`, which redirects the output of the command (the contents of the compressed archive) directly to a file.
+
+#### Restore a backup from Cloud Files
+
+Assume that you have set the environment variables `RS_USERNAME`, `RS_API_KEY`, and `RS_REGION_NAME` to your Rackspace username, Rackspace API key, and preferred Rackspace region, respectively. To download the backup from Cloud Files and write them to `/data/`, run the following command:
+
+```bash
+$ docker run \
+  --rm \
+  --env RS_USERNAME=${RS_USERNAME} \
+  --env RS_API_KEY=${RS_API_KEY} \
+  --env RS_REGION_NAME=${RS_REGION_NAME} \
+  --volumes-from mysql-data \
+  carinamarina/backup \
+  restore \
+  --container mysql-backups \
+  --object 2016/03/10/01-30-data.tar.gz \
+  --destination /data/ \
+  --zip
+Reading and unzipping archive...
+Done.
+```
+
+#### Restore a local backup
+
+If you have a backup archive on your local machine, you can restore it by piping it into the `docker run` command:
+
+```bash
+$ docker run \
+  --rm \
+  --interactive \
+  --volumes-from mysql-data \
+  carinamarina/backup \
+  restore \
+  --destination /data/ \
+  --stdin \
+  --zip \
+  < mysql-backup.tar.gz
+Reading and unzipping archive...
+Done.
+```

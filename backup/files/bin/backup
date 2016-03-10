@@ -2,6 +2,18 @@
 
 set -ueo pipefail
 
+# Either output directly, or pipe to rack.
+output_archive () {
+  if ${STDOUT}; then
+    cat /dev/stdin
+  else
+    echo "Uploading archive to Cloud Files..."
+    cat /dev/stdin | rack files large-object upload --size-pieces 64 --container ${CONTAINER} --stdin content --name ${object_name}
+  fi
+
+  return 0
+}
+
 # Removes non-alphanumeric characters and downcases a string
 slugify () {
   string=${1:-}
@@ -26,10 +38,10 @@ usage () {
 
 # Set default values for each of the options
 CONTAINER=""
-COMPRESS=false
+ZIP=false
 HELP=false
 SOURCE=""
-USE_STDOUT=false
+STDOUT=false
 
 # Get options
 args=$(getopt -o "c:h::s:z::" --long "container:,help::,source:,stdout::,zip::" -n $(basename "${0}") -- "$@")
@@ -45,8 +57,8 @@ while true; do
     -c | --container ) CONTAINER="$value"; shift; shift ;;
     -h | --help ) HELP=true; shift; shift ;;
     -s | --source ) SOURCE="$value"; shift; shift ;;
-    --stdout ) USE_STDOUT=true; shift; shift ;;
-    -z | --zip ) COMPRESS=true; shift; shift ;;
+    --stdout ) STDOUT=true; shift; shift ;;
+    -z | --zip ) ZIP=true; shift; shift ;;
     -- ) shift; break ;;
     * ) break ;;
   esac
@@ -60,12 +72,12 @@ fi
 
 # After assigning variables, make sure we're in a good state to proceed.
 if [[ -z ${SOURCE} ]]; then
-  echo "Error: No backup source specified."
+  >&2 echo "Error: No backup source specified."
   exit 1
 fi
 
-if [ -z ${CONTAINER} ] && ! ${USE_STDOUT}; then
-  echo "Error: No Cloud Files container specified. Did you mean to use -o?"
+if [ -z ${CONTAINER} ] && ! ${STDOUT}; then
+  >&2 echo "Error: No Cloud Files container specified. Did you mean to use -o?"
   exit 1
 fi
 
@@ -80,39 +92,27 @@ date_time=$(date +%H-%M)
 file_slug=$(slugify ${date_time}-${SOURCE})
 file_name=${file_slug}.tar
 
-# Use "-" to have `tar` pipe the archive contents to stdout
-if ${USE_STDOUT}; then
-  tar_file="-"
-else
-
-  # If compressing the archive, add the customary `.gz` file extension.
-  if ${COMPRESS}; then
-    file_name=${file_name}.gz
-  fi
-
-  # Store the archive in /tmp
-  tar_file=/tmp/${file_name}
-fi
-
-# Run the appropriate invocation of `tar`
-echo "Adding source data to archive..."
-if ${COMPRESS}; then
-  tar -czf ${tar_file} -C ${SOURCE} .
-else
-  tar -cf ${tar_file} -C ${SOURCE} .
-fi
-
-# If piping to stdout, we're done!
-if ${USE_STDOUT}; then
-  exit 0
+# If compressing the archive, add the customary `.gz` file extension.
+if ${ZIP}; then
+  file_name=${file_name}.gz
 fi
 
 # Format the Cloud Files object name.
 object_name=${date_year}/${date_month}/${date_day}/${file_name}
 
-# Upload the archive to Cloud Files
-echo "Uploading archive..."
-rack files large-object upload --size-pieces 64 --container ${CONTAINER} --file ${tar_file} --name ${object_name}
+# Run the appropriate invocation of `tar`
+if ! ${STDOUT}; then
+  echo "Bundling archive..."
+fi
 
-# Remove the archive.
-rm ${tar_file}
+if ${ZIP}; then
+  tar -czf - -C ${SOURCE} . | output_archive
+else
+  tar -cf - -C ${SOURCE} . | output_archive
+fi
+
+if ! ${STDOUT}; then
+  echo "Done."
+fi
+
+exit 0

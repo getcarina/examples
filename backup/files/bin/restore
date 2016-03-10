@@ -63,13 +63,13 @@ fi
 
 # After assigning variables, make sure we're in a good state to proceed.
 if [[ -z ${DESTINATION} ]]; then
-  echo "Error: No restore destination specified."
+  >&2 echo "Error: No restore destination specified."
   exit 1
 fi
 
 if [ -z ${CONTAINER} ] || [ -z ${OBJECT} ]; then
   if ! ${STDIN}; then
-    echo "Error: No Cloud Files container/object specified. Did you mean to use --stdin?"
+    >&2 echo "Error: No Cloud Files container/object specified. Did you mean to use --stdin?"
     exit 1
   fi
 fi
@@ -81,3 +81,6 @@ else
   echo "Reading and extracting archive..."
   get_archive | tar -xf - -C ${DESTINATION}
 fi
+
+echo "Done."
+exit 0
