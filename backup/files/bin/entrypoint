@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -ueo pipefail
+
+run_command=${1:-}
+run_args=$(echo "$@" | cut -d ' ' -f2-)
+
+# Let's not run just any arbitrary command
+if [[ ${run_command} = "backup" ]] || [[ ${run_command} = "restore" ]]; then
+  ${run_command} ${run_args}
+else
+  >&2 echo ""
+  >&2 echo "Usage: docker run [options] carinamarina/backup <backup|restore> <args>"
+  >&2 echo ""
+  exit 1
+fi
