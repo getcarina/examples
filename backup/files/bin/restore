@@ -72,6 +72,14 @@ if [ -z ${CONTAINER} ] || [ -z ${OBJECT} ]; then
     >&2 echo "Error: No Cloud Files container/object specified. Did you mean to use --stdin?"
     exit 1
   fi
+else
+  # Check to be sure the object exists before trying to download it
+  object=$(rack files object get --container ${CONTAINER} --name ${OBJECT} 2>&1)
+
+  if [[ -n $(echo ${object} | grep -e "^error") ]];then
+    >&2 echo "Error: Unable to retrieve object from Cloud Files."
+    exit 1
+  fi
 fi
 
 if ${ZIP}; then

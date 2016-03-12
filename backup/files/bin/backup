@@ -76,9 +76,14 @@ if [[ -z ${SOURCE} ]]; then
   exit 1
 fi
 
-if [ -z ${CONTAINER} ] && ! ${STDOUT}; then
+if [[ -z ${CONTAINER} ]] && ! ${STDOUT}; then
   >&2 echo "Error: No Cloud Files container specified. Did you mean to use -o?"
   exit 1
+fi
+
+# (silently) Ensure the Cloud Files container exists
+if [[ -n ${CONTAINER} ]]; then
+  rack files container create --name ${CONTAINER} > /dev/null
 fi
 
 # Assign year/month/day/time to variables
