@@ -38,7 +38,7 @@ cat <<EOF >>/etc/nginx/nginx.conf
 
 stream {
   server {
-    listen 3306;
+    listen ${UPSTREAM_PORT};
     proxy_pass ${UPSTREAM}:${UPSTREAM_PORT};
   }
 }
