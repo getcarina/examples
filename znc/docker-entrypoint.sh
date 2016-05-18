@@ -21,4 +21,4 @@ fi
 
 chown -R znc:znc "$DATADIR"
 
-su -c "znc --makepem && znc --foreground --datadir=$DATADIR" -s /bin/sh znc
+su -c "znc --makepem --datadir=$DATADIR && znc --foreground --datadir=$DATADIR" -s /bin/sh znc
