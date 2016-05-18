@@ -19,7 +19,9 @@ if [ ! -f "${DATADIR}/configs/znc.conf" ]; then
     cp /znc.conf.default "${DATADIR}/configs/znc.conf"
 fi
 
-sed -i "#^SSLCertFile#s#/home/znc/.znc#$DATADIR#" $DATADIR/configs/znc.conf
+su -c "znc --makepem --datadir=$DATADIR" -s /bin/sh znc
+echo "SSLCertFile $DATADIR/znc.pem" >> $DATADIR/configs/znc.conf
+
 chown -R znc:znc "$DATADIR"
 
-su -c "znc --makepem --datadir=$DATADIR && znc --foreground --datadir=$DATADIR" -s /bin/sh znc
+su -c "znc --foreground --datadir=$DATADIR" -s /bin/sh znc
