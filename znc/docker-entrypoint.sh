@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-DATADIR=${1:-/home/znc/.znc}
+DATADIR=$1
 
 if [ -d "${DATADIR}/modules" ]; then
   cwd="$(pwd)"
