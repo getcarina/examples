@@ -14,17 +14,16 @@
   </properties>
   
   <repositories>
-  <repository>
-      <id>apache.snapshots</id>
-      <name>Apache Development Snapshot Repository</name>
-      <url>https://repository.apache.org/content/repositories/snapshots/</url>
-      <releases>
+      <repository>
+        <id>apache-snapshots</id>
+        <url>https://repository.apache.org/content/repositories/snapshots</url>
+        <releases>
           <enabled>false</enabled>
-      </releases>
-      <snapshots>
+        </releases>
+        <snapshots>
           <enabled>true</enabled>
-      </snapshots>
-  </repository>
+        </snapshots>
+      </repository>
   </repositories>
 
   <dependencies>
@@ -43,7 +42,7 @@
 
     <!-- jclouds docker dependency, as per the examples -->
     <dependency>
-      <groupId>org.apache.jclouds.labs</groupId>
+      <groupId>org.apache.jclouds.api</groupId>
       <artifactId>docker</artifactId>
       <!-- TODO: Update version to variable jclouds.version on next release -->
       <version>2.0.0-SNAPSHOT</version>
@@ -62,6 +61,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
+        <version>2.6</version>
       </plugin>
       <plugin>
         <groupId>org.apache.tomcat.maven</groupId>
