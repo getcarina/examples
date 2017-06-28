@@ -22,7 +22,7 @@ usage () {
   echo "  -h, --help                Show help information"
   echo "  -o, --object <name>       Name of archive object in a container"
   echo "  --stdin                   Use stdin instead of Cloud Files"
-  echo "  -z, --zip                 Use gzip to uncompress archive"
+  echo "  -z, --zip                 Use pigz to uncompress gzip archive"
   echo "  "
 }
 
@@ -84,7 +84,7 @@ fi
 
 if ${ZIP}; then
   echo "Reading and unzipping archive..."
-  get_archive | tar -xzf - -C ${DESTINATION}
+  get_archive | unpigz -c | tar -xf - -C ${DESTINATION}
 else
   echo "Reading and extracting archive..."
   get_archive | tar -xf - -C ${DESTINATION}

@@ -32,7 +32,7 @@ usage () {
   echo "  -h, --help                Show help information"
   echo "  -s, --source <path>       Path to source directory"
   echo "  --stdout                  Use stdout instead of Cloud Files"
-  echo "  -z, --zip                 Use gzip to compress archive"
+  echo "  -z, --zip                 Use pigz to output gzip compressed archive"
   echo "  "
 }
 
@@ -111,7 +111,7 @@ if ! ${STDOUT}; then
 fi
 
 if ${ZIP}; then
-  tar -czf - -C ${SOURCE} . | output_archive
+  tar -cf - -C ${SOURCE} . | pigz -c | output_archive
 else
   tar -cf - -C ${SOURCE} . | output_archive
 fi
